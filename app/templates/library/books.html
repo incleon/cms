@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Library{% endblock %}
+{% block page_title %}Library Management{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-4">
+    <form class="d-flex gap-2" method="get" action="/library">
+        <input type="text" class="form-control" name="search" placeholder="Search books..." value="{{ search or '' }}">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for book in items %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.category or 'N/A' }}</td>
+                    <td>{{ book.available_copies }}/{{ book.total_copies }}</td>
+                    <td><span class="badge bg-{{ 'success' if book.available_copies > 0 else 'danger' }}">{{ 'Available' if book.available_copies > 0 else 'Unavailable' }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No books found</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

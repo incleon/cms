@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Teachers{% endblock %}
+{% block page_title %}Teacher Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <form class="d-flex gap-2" method="get" action="/teachers">
+        <input type="text" class="form-control" name="search" placeholder="Search..." value="{{ search or '' }}">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+    </form>
+    {% if 'manage_teachers' in permissions %}
+    <a href="/teachers/create" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Add Teacher</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead><tr><th>Employee ID</th><th>Name</th><th>Department</th><th>Designation</th><th>Actions</th></tr></thead>
+                <tbody>
+                {% for teacher in items %}
+                <tr>
+                    <td><code>{{ teacher.employee_id }}</code></td>
+                    <td>{{ teacher.user.full_name if teacher.user else 'N/A' }}</td>
+                    <td>{{ teacher.department.name if teacher.department else 'N/A' }}</td>
+                    <td>{{ teacher.designation or 'N/A' }}</td>
+                    <td>
+                        {% if 'manage_teachers' in permissions %}
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('teachers', {{ teacher.id }})"><i class="bi bi-trash"></i></button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No teachers found</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

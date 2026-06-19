@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Department Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-4">
+    <div></div>
+    {% if 'manage_departments' in permissions %}
+    <a href="/departments/create" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Add Department</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead><tr><th>Code</th><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+                <tbody>
+                {% for dept in items %}
+                <tr>
+                    <td><code>{{ dept.code }}</code></td>
+                    <td>{{ dept.name }}</td>
+                    <td>{{ dept.description or '' }}</td>
+                    <td>
+                        {% if 'manage_departments' in permissions %}
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('departments', {{ dept.id }})"><i class="bi bi-trash"></i></button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No departments found</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

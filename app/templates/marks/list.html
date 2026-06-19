@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Marks{% endblock %}
+{% block page_title %}Marks & Grades{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="mb-1 text-heading" style="font-weight:700;">Marks & Grades</h5>
+        <p class="text-muted mb-0" style="font-size:0.85rem;">View student marks and grade records</p>
+    </div>
+    {% if 'upload_marks' in permissions %}
+    <a href="/marks/upload" class="btn btn-primary"><i class="bi bi-upload me-2"></i>Upload Marks</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if records %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Exam Type</th>
+                        <th>Marks</th>
+                        <th>Max Marks</th>
+                        <th>Semester</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.student.user.full_name if record.student and record.student.user else 'N/A' }}</td>
+                        <td>{{ record.subject.name if record.subject else 'N/A' }}</td>
+                        <td><span class="badge bg-primary-subtle text-primary">{{ record.exam_type | title }}</span></td>
+                        <td><strong>{{ record.marks_obtained }}</strong></td>
+                        <td>{{ record.max_marks }}</td>
+                        <td>{{ record.semester }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-clipboard-x"></i>
+            <p>No marks records found</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

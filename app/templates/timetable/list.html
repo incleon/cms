@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Timetable{% endblock %}
+{% block page_title %}Class Schedule{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="mb-1 text-heading" style="font-weight:700;">Weekly Timetable</h5>
+        <p class="text-muted mb-0" style="font-size:0.85rem;">View scheduled classes and events</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0 text-center" style="--bs-table-bg: transparent; --bs-table-border-color: var(--border-color);">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Time</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if records %}
+                        {% for row in records %}
+                        <tr>
+                            <td class="align-middle fw-bold text-muted">{{ row.time }}</td>
+                            <td class="align-middle p-3">
+                                {% if row.monday %}
+                                <div class="badge bg-primary-subtle text-primary d-block mb-1">{{ row.monday.subject.code if row.monday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.monday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="align-middle p-3">
+                                {% if row.tuesday %}
+                                <div class="badge bg-success-subtle text-success d-block mb-1" style="background:rgba(34,197,94,0.15)">{{ row.tuesday.subject.code if row.tuesday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.tuesday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="align-middle p-3">
+                                {% if row.wednesday %}
+                                <div class="badge bg-warning-subtle text-warning d-block mb-1" style="background:rgba(245,158,11,0.15)">{{ row.wednesday.subject.code if row.wednesday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.wednesday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="align-middle p-3">
+                                {% if row.thursday %}
+                                <div class="badge bg-info-subtle text-info d-block mb-1" style="background:rgba(59,130,246,0.15)">{{ row.thursday.subject.code if row.thursday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.thursday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="align-middle p-3">
+                                {% if row.friday %}
+                                <div class="badge bg-danger-subtle text-danger d-block mb-1" style="background:rgba(239,68,68,0.15)">{{ row.friday.subject.code if row.friday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.friday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td class="align-middle p-3">
+                                {% if row.saturday %}
+                                <div class="badge bg-secondary-subtle text-secondary d-block mb-1" style="background:rgba(100,116,139,0.15)">{{ row.saturday.subject.code if row.saturday.subject else '' }}</div>
+                                <div style="font-size: 0.75rem;">{{ row.saturday.room_number }}</div>
+                                {% else %}-{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-calendar3"></i>
+                                    <p>No timetable records configured</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

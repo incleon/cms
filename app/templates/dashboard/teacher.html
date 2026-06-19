@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Teacher Dashboard{% endblock %}
+{% block page_title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    {% for stat in dashboard.stats %}
+    <div class="col-xl-4 col-md-6">
+        <div class="stat-card stat-{{ stat.color }}">
+            <div class="stat-icon"><i class="bi {{ stat.icon }}"></i></div>
+            <div class="stat-info"><h3>{{ stat.value }}</h3><p>{{ stat.label }}</p></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h6></div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/attendance/mark" class="quick-action">
+                        <i style="background:rgba(34,197,94,0.15);color:var(--accent-green);"><span class="bi bi-calendar-check"></span></i>
+                        Mark Attendance
+                    </a>
+                    <a href="/marks/upload" class="quick-action">
+                        <i style="background:rgba(99,102,241,0.15);color:var(--accent-primary-light);"><span class="bi bi-clipboard-data"></span></i>
+                        Upload Marks
+                    </a>
+                    <a href="/students" class="quick-action">
+                        <i style="background:rgba(59,130,246,0.15);color:var(--accent-blue);"><span class="bi bi-people"></span></i>
+                        View Students
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-book me-2"></i>Assigned Subjects</h6></div>
+            <div class="card-body">
+                {% if dashboard.subjects %}
+                <div class="row g-3">
+                    {% for subject in dashboard.subjects %}
+                    <div class="col-md-6">
+                        <div style="padding:14px 18px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);transition:var(--transition);">
+                            <div style="font-weight:600;font-size:0.9rem;color:var(--text-heading);">{{ subject.name }}</div>
+                            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;"><code>{{ subject.code }}</code></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state"><i class="bi bi-journal-x"></i><p>No subjects assigned yet</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

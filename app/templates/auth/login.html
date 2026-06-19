@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block public_content %}
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="bi bi-mortarboard-fill login-icon"></i>
+                <h2>College Management System</h2>
+                <p class="text-muted">Enterprise Edition • Sign in to continue</p>
+            </div>
+
+            <div id="login-error" class="alert alert-danger d-none" style="font-size:0.85rem;"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email"
+                               placeholder="admin@cms.edu" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Enter password" required>
+                        <button class="btn btn-outline-secondary" type="button"
+                                onclick="togglePassword()">
+                            <i class="bi bi-eye" id="togglePwdIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-lg" id="loginBtn" style="padding:12px;">
+                    <span class="spinner-border spinner-border-sm d-none" id="loginSpinner"></span>
+                    Sign In
+                </button>
+            </form>
+
+            <div class="demo-credentials">
+                <p class="mb-2"><strong>Demo Accounts</strong> (password: <code>admin123</code>)</p>
+                <div class="demo-grid">
+                    <button class="demo-btn" onclick="fillDemo('admin@cms.edu')">
+                        <i class="bi bi-person-gear"></i> Admin
+                    </button>
+                    <button class="demo-btn" onclick="fillDemo('hod@cms.edu')">
+                        <i class="bi bi-award"></i> HOD
+                    </button>
+                    <button class="demo-btn" onclick="fillDemo('teacher@cms.edu')">
+                        <i class="bi bi-person-badge"></i> Teacher
+                    </button>
+                    <button class="demo-btn" onclick="fillDemo('student1@cms.edu')">
+                        <i class="bi bi-mortarboard"></i> Student
+                    </button>
+                    <button class="demo-btn" onclick="fillDemo('accountant@cms.edu')">
+                        <i class="bi bi-cash"></i> Accountant
+                    </button>
+                    <button class="demo-btn" onclick="fillDemo('librarian@cms.edu')">
+                        <i class="bi bi-book"></i> Librarian
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillDemo(email) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = 'admin123';
+}
+
+function togglePassword() {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('togglePwdIcon');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        pwd.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const spinner = document.getElementById('loginSpinner');
+    const errorDiv = document.getElementById('login-error');
+
+    btn.disabled = true;
+    spinner.classList.remove('d-none');
+    errorDiv.classList.add('d-none');
+
+    try {
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            window.location.href = '/dashboard';
+        } else {
+            errorDiv.textContent = data.detail || 'Login failed';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (err) {
+        errorDiv.textContent = 'Connection error. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        btn.disabled = false;
+        spinner.classList.add('d-none');
+    }
+}
+</script>
+{% endblock %}

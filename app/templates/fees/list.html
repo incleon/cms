@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Fees{% endblock %}
+{% block page_title %}Fee Management{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead><tr><th>Student</th><th>Type</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for fee in items %}
+                <tr>
+                    <td>{{ fee.student.user.full_name if fee.student and fee.student.user else 'N/A' }}</td>
+                    <td>{{ fee.fee_type.value if fee.fee_type else '' }}</td>
+                    <td>₹{{ "%.0f"|format(fee.amount) }}</td>
+                    <td>₹{{ "%.0f"|format(fee.paid_amount) }}</td>
+                    <td>₹{{ "%.0f"|format(fee.balance) }}</td>
+                    <td><span class="badge bg-{{ 'success' if fee.status.value == 'paid' else 'warning' if fee.status.value == 'partial' else 'danger' }}">{{ fee.status.value }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No fee records found</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

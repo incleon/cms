@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}HOD Dashboard{% endblock %}
+{% block page_title %}HOD Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    {% for stat in dashboard.stats %}
+    <div class="col-xl-4 col-md-6">
+        <div class="stat-card stat-{{ stat.color }}">
+            <div class="stat-icon"><i class="bi {{ stat.icon }}"></i></div>
+            <div class="stat-info"><h3>{{ stat.value }}</h3><p>{{ stat.label }}</p></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h6></div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/students" class="quick-action">
+                        <i style="background:rgba(99,102,241,0.15);color:var(--accent-primary-light);"><span class="bi bi-people"></span></i>
+                        View Students
+                    </a>
+                    <a href="/teachers" class="quick-action">
+                        <i style="background:rgba(34,197,94,0.15);color:var(--accent-green);"><span class="bi bi-person-badge"></span></i>
+                        View Teachers
+                    </a>
+                    <a href="/courses" class="quick-action">
+                        <i style="background:rgba(59,130,246,0.15);color:var(--accent-blue);"><span class="bi bi-journal-bookmark"></span></i>
+                        Manage Courses
+                    </a>
+                    <a href="/attendance" class="quick-action">
+                        <i style="background:rgba(245,158,11,0.15);color:var(--accent-amber);"><span class="bi bi-calendar-check"></span></i>
+                        Attendance Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-building me-2"></i>Department Overview</h6></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px;">Department</div>
+                        <div style="font-size:1rem;font-weight:600;color:var(--text-heading);">{{ dashboard.department_name }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px;">Total Teachers</div>
+                        <div style="font-size:1rem;font-weight:600;color:var(--accent-green);">{{ dashboard.total_teachers }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px;">Total Students</div>
+                        <div style="font-size:1rem;font-weight:600;color:var(--accent-primary-light);">{{ dashboard.total_students }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
