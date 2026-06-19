@@ -15,7 +15,7 @@ class AdminDashboardData(BaseModel):
     total_students: int = 0
     total_teachers: int = 0
     total_departments: int = 0
-    total_courses: int = 0
+    total_subjects: int = 0
     pending_fees: float = 0
     recent_students: list = []
     stats: List[DashboardStat] = []

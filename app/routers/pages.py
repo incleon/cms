@@ -16,7 +16,7 @@ from app.core.dependencies import get_db, get_current_user, get_optional_user
 from app.services.dashboard_service import DashboardFactory
 from app.services.crud_services import (
     StudentService, TeacherService, DepartmentService,
-    CourseService, SubjectService, FeeService, LibraryService,
+    SubjectService, FeeService, LibraryService,
 )
 from app.repositories.concrete import AttendanceRepository, MarksRepository, SubjectRepository
 from app.core.logging_config import get_logger
@@ -160,18 +160,17 @@ def department_create_page(request: Request, user=Depends(get_current_user)):
         "departments/create.html", _context(request, user),
     )
 
-
 # ══════════════════════════════════════════════════════════════
-# COURSE PAGES
+# SUBJECT PAGES
 # ══════════════════════════════════════════════════════════════
 
-@router.get("/courses", response_class=HTMLResponse)
-def courses_list(request: Request, db: Session = Depends(get_db),
+@router.get("/subjects", response_class=HTMLResponse)
+def subjects_list(request: Request, db: Session = Depends(get_db),
                  user=Depends(get_current_user), page: int = 1):
-    result = CourseService(db).list(page, 100)
+    result = SubjectService(db).list(page, 100)
     departments = DepartmentService(db).list(1, 100)["items"]
     return templates.TemplateResponse(
-        "courses/list.html", _context(request, user, **result, departments=departments),
+        "subjects/list.html", _context(request, user, **result, departments=departments),
     )
 
 

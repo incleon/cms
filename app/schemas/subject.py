@@ -10,7 +10,8 @@ class SubjectCreate(BaseModel):
     description: Optional[str] = None
     credits: int = 3
     semester: int
-    course_id: int
+    department_id: int
+    teacher_id: Optional[int] = None
 
 
 class SubjectUpdate(BaseModel):
@@ -19,7 +20,8 @@ class SubjectUpdate(BaseModel):
     description: Optional[str] = None
     credits: Optional[int] = None
     semester: Optional[int] = None
-    course_id: Optional[int] = None
+    department_id: Optional[int] = None
+    teacher_id: Optional[int] = None
 
 
 class SubjectResponse(BaseModel):
@@ -29,8 +31,10 @@ class SubjectResponse(BaseModel):
     description: Optional[str] = None
     credits: int
     semester: int
-    course_id: int
-    course_name: Optional[str] = None
+    department_id: int
+    department_name: Optional[str] = None
+    teacher_id: Optional[int] = None
+    teacher_name: Optional[str] = None
     teachers: list = []
     created_at: Optional[datetime] = None
     model_config = {"from_attributes": True}

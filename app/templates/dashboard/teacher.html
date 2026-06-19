@@ -44,9 +44,17 @@
                 <div class="row g-3">
                     {% for subject in dashboard.subjects %}
                     <div class="col-md-6">
-                        <div style="padding:14px 18px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);transition:var(--transition);">
-                            <div style="font-weight:600;font-size:0.9rem;color:var(--text-heading);">{{ subject.name }}</div>
-                            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;"><code>{{ subject.code }}</code></div>
+                        <div style="padding:16px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);transition:var(--transition);overflow:hidden;">
+                            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                                <div style="flex:1;min-width:0;">
+                                    <div style="font-weight:600;font-size:0.95rem;color:var(--text-heading);margin-bottom:4px;">{{ subject.name }}</div>
+                                    <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;"><code style="background:rgba(255,255,255,0.04);padding:2px 6px;border-radius:3px;">{{ subject.code }}</code></div>
+                                    <div style="font-size:0.75rem;color:var(--text-secondary);display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+                                        <span><i class="bi bi-building" style="margin-right:3px;opacity:0.6;"></i>{{ subject.department_name }}</span>
+                                        <span><i class="bi bi-hourglass" style="margin-right:3px;opacity:0.6;"></i>Sem {{ subject.semester }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}

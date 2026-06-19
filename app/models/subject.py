@@ -16,7 +16,8 @@ class Subject(BaseModel):
     Subject model (e.g., Data Structures, Calculus).
 
     Relationships:
-    - MANY-TO-ONE: Subject belongs to Course
+    - MANY-TO-ONE: Subject belongs to Department
+    - ONE-TO-ONE: Subject may be assigned to a Teacher
     - MANY-TO-MANY: Subject ↔ Teacher via SubjectTeacher
     - ONE-TO-MANY: Subject → Attendance, Marks
     """
@@ -29,15 +30,23 @@ class Subject(BaseModel):
     credits = Column(Integer, default=3, nullable=False)
     semester = Column(Integer, nullable=False)
 
-    course_id = Column(
+    department_id = Column(
         Integer,
-        ForeignKey("courses.id", ondelete="CASCADE"),
+        ForeignKey("departments.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
 
+    teacher_id = Column(
+        Integer,
+        ForeignKey("teachers.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     # ── RELATIONSHIPS ────────────────────────────────────────
-    course = relationship("Course", back_populates="subjects", lazy="joined")
+    department = relationship("Department", back_populates="subjects", lazy="joined")
+    teacher = relationship("Teacher", backref="assigned_subjects", lazy="joined")
 
     # MANY-TO-MANY with Teacher
     teacher_assignments = relationship(

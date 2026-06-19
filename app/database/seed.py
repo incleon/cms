@@ -8,7 +8,6 @@ Creates roles, permissions, role-permission mappings, and demo users.
 from sqlalchemy.orm import Session
 from app.models.user import User, Role, Permission, UserRole, RolePermission
 from app.models.department import Department
-from app.models.course import Course
 from app.models.subject import Subject
 from app.models.student import Student
 from app.models.teacher import Teacher
@@ -33,9 +32,6 @@ PERMISSIONS = [
     # Teacher
     ("view_teachers", "teacher", "read", "View teachers"),
     ("manage_teachers", "teacher", "manage", "Manage teachers"),
-    # Course
-    ("view_courses", "course", "read", "View courses"),
-    ("manage_courses", "course", "manage", "Manage courses"),
     # Subject
     ("view_subjects", "subject", "read", "View subjects"),
     ("manage_subjects", "subject", "manage", "Manage subjects"),
@@ -65,7 +61,7 @@ ROLE_PERMISSIONS = {
     "admin": [p[0] for p in PERMISSIONS],  # ALL permissions
     "hod": [
         "view_departments", "manage_departments", "view_students",
-        "manage_students", "view_teachers", "view_courses", "manage_courses",
+        "manage_students", "view_teachers",
         "view_subjects", "manage_subjects", "view_attendance", "view_marks",
         "view_reports", "view_dashboard", "manage_profile",
     ],
@@ -171,25 +167,19 @@ def seed_database(db: Session) -> None:
     db.add_all([cs_dept, ee_dept, me_dept])
     db.flush()
 
-    # ── 6. Create Courses ────────────────────────────────────
-    btech_cs = Course(name="B.Tech Computer Science", code="BTCS", department_id=cs_dept.id, semester=1)
-    btech_ee = Course(name="B.Tech Electrical", code="BTEE", department_id=ee_dept.id, semester=1)
-    db.add_all([btech_cs, btech_ee])
-    db.flush()
-
-    # ── 7. Create Subjects ───────────────────────────────────
+    # ── 6. Create Subjects ───────────────────────────────────
     subjects_data = [
-        ("Data Structures", "CS201", 3, 3, btech_cs.id),
-        ("Algorithms", "CS301", 3, 5, btech_cs.id),
-        ("Database Systems", "CS302", 3, 5, btech_cs.id),
-        ("Operating Systems", "CS303", 3, 5, btech_cs.id),
-        ("Circuit Theory", "EE201", 4, 3, btech_ee.id),
+        ("Data Structures", "CS201", 3, 3, cs_dept.id),
+        ("Algorithms", "CS301", 3, 5, cs_dept.id),
+        ("Database Systems", "CS302", 3, 5, cs_dept.id),
+        ("Operating Systems", "CS303", 3, 5, cs_dept.id),
+        ("Circuit Theory", "EE201", 4, 3, ee_dept.id),
     ]
-    for name, code, credits, sem, course_id in subjects_data:
-        db.add(Subject(name=name, code=code, credits=credits, semester=sem, course_id=course_id))
+    for name, code, credits, sem, dept_id in subjects_data:
+        db.add(Subject(name=name, code=code, credits=credits, semester=sem, department_id=dept_id))
     db.flush()
 
-    # ── 8. Create Demo Teacher ───────────────────────────────
+    # ── 7. Create Demo Teacher ───────────────────────────────
     teacher_user = User(
         email="teacher@cms.edu", username="teacher",
         hashed_password=demo_password, full_name="Dr. Priya Sharma",
@@ -227,7 +217,7 @@ def seed_database(db: Session) -> None:
     # Set HOD
     cs_dept.hod_id = hod_teacher.id
 
-    # ── 9. Create Demo Students ──────────────────────────────
+    # ── 8. Create Demo Students ──────────────────────────────
     for i in range(1, 6):
         stu_user = User(
             email=f"student{i}@cms.edu", username=f"student{i}",

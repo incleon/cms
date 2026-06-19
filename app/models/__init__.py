@@ -12,10 +12,10 @@ modules and providing a clean public API.
 
 # Import all models to register them with SQLAlchemy
 from app.models.user import User, Role, Permission, UserRole, RolePermission  # noqa
+from app.models.course import Course  # noqa
 from app.models.department import Department  # noqa
 from app.models.student import Student  # noqa
 from app.models.teacher import Teacher  # noqa
-from app.models.course import Course  # noqa
 from app.models.subject import Subject, SubjectTeacher  # noqa
 from app.models.attendance import Attendance  # noqa
 from app.models.marks import Marks  # noqa

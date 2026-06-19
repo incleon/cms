@@ -2,10 +2,11 @@
 Course Model
 ==============
 
-Represents academic courses offered by departments.
+OOP Concepts: Inheritance, One-to-Many
+SQLAlchemy: One-to-Many relationships, back_populates
 """
 
-from sqlalchemy import Column, String, Integer, ForeignKey, Text
+from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
 
 from app.database.base import BaseModel
@@ -13,40 +14,30 @@ from app.database.base import BaseModel
 
 class Course(BaseModel):
     """
-    Course model (e.g., B.Tech Computer Science, MBA Finance).
+    Course model — represents academic programs/courses.
+
+    Examples: B.TECH, MBA, B.PHARMA, B.COM
+
+    OOP Concept: AGGREGATION
+    ──────────────────────────
+    Course HAS departments, but they can exist independently.
 
     Relationships:
-    - MANY-TO-ONE: Course belongs to Department
-    - ONE-TO-MANY: Course has many Subjects
+    - ONE-TO-MANY: Course → Departments
     """
 
     __tablename__ = "courses"
 
-    name = Column(String(200), nullable=False, index=True)
-    code = Column(String(20), unique=True, nullable=False, index=True)
+    name = Column(String(200), unique=True, nullable=False, index=True)
+    code = Column(String(50), unique=True, nullable=False, index=True)
     description = Column(Text, nullable=True)
-    semester = Column(Integer, nullable=True)
-    teacher_id = Column(
-        Integer,
-        ForeignKey("teachers.id", ondelete="SET NULL"),
-        nullable=True,
-        index=True,
-    )
-
-    department_id = Column(
-        Integer,
-        ForeignKey("departments.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
+    duration_years = Column(String(50), nullable=True, doc="Duration e.g., '4 years'")
 
     # ── RELATIONSHIPS ────────────────────────────────────────
-    department = relationship("Department", back_populates="courses", lazy="joined")
-    teacher = relationship("Teacher", backref="assigned_courses", lazy="joined")
-    subjects = relationship(
-        "Subject",
+    # ONE-TO-MANY: Course has many departments (AGGREGATION)
+    departments = relationship(
+        "Department",
         back_populates="course",
-        cascade="all, delete-orphan",
         lazy="dynamic",
     )
 
@@ -54,4 +45,4 @@ class Course(BaseModel):
         return f"{self.name} ({self.code})"
 
     def __repr__(self) -> str:
-        return f"<Course(id={self.id}, code='{self.code}')>"
+        return f"<Course(id={self.id}, code='{self.code}', name='{self.name}')>"

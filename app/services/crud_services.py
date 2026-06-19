@@ -19,8 +19,8 @@ import uuid
 from app.services.base import IService
 from app.repositories.concrete import (
     UserRepository, RoleRepository, PermissionRepository,
-    StudentRepository, TeacherRepository, DepartmentRepository,
-    CourseRepository, SubjectRepository, AttendanceRepository,
+    StudentRepository, TeacherRepository, CourseRepository, DepartmentRepository,
+    SubjectRepository, AttendanceRepository,
     MarksRepository, FeeRepository, LibraryBookRepository,
     BookIssueRepository, AuditLogRepository,
 )
@@ -302,47 +302,6 @@ class TeacherService(IService):
 
 
 # ══════════════════════════════════════════════════════════════
-# DEPARTMENT SERVICE
-# ══════════════════════════════════════════════════════════════
-
-class DepartmentService(IService):
-    def __init__(self, db: Session):
-        self._dept_repo = DepartmentRepository(db)
-        self._db = db
-
-    def get(self, id: int):
-        dept = self._dept_repo.get_by_id(id)
-        if not dept:
-            raise NotFoundException("Department", id)
-        return dept
-
-    def list(self, page=1, page_size=10, search=None, sort_by="id", sort_order="desc"):
-        skip = (page - 1) * page_size
-        if search:
-            items = self._dept_repo.search(["name", "code"], search, skip, page_size)
-            total = self._dept_repo.search_count(["name", "code"], search)
-        else:
-            items = self._dept_repo.get_all(skip, page_size, sort_by, sort_order)
-            total = self._dept_repo.count()
-        return {"items": items, "total": total, "page": page, "page_size": page_size}
-
-    def create(self, data: Dict[str, Any]):
-        if self._dept_repo.get_by_code(data.get("code", "")):
-            raise ConflictException(detail="Department code already exists")
-        return self._dept_repo.create(data)
-
-    def update(self, id: int, data: Dict[str, Any]):
-        update_data = {k: v for k, v in data.items() if v is not None}
-        result = self._dept_repo.update(id, update_data)
-        if not result:
-            raise NotFoundException("Department", id)
-        return result
-
-    def delete(self, id: int) -> bool:
-        return self._dept_repo.soft_delete(id)
-
-
-# ══════════════════════════════════════════════════════════════
 # COURSE SERVICE
 # ══════════════════════════════════════════════════════════════
 
@@ -381,6 +340,47 @@ class CourseService(IService):
 
     def delete(self, id: int) -> bool:
         return self._course_repo.soft_delete(id)
+
+
+# ══════════════════════════════════════════════════════════════
+# DEPARTMENT SERVICE
+# ══════════════════════════════════════════════════════════════
+
+class DepartmentService(IService):
+    def __init__(self, db: Session):
+        self._dept_repo = DepartmentRepository(db)
+        self._db = db
+
+    def get(self, id: int):
+        dept = self._dept_repo.get_by_id(id)
+        if not dept:
+            raise NotFoundException("Department", id)
+        return dept
+
+    def list(self, page=1, page_size=10, search=None, sort_by="id", sort_order="desc"):
+        skip = (page - 1) * page_size
+        if search:
+            items = self._dept_repo.search(["name", "code"], search, skip, page_size)
+            total = self._dept_repo.search_count(["name", "code"], search)
+        else:
+            items = self._dept_repo.get_all(skip, page_size, sort_by, sort_order)
+            total = self._dept_repo.count()
+        return {"items": items, "total": total, "page": page, "page_size": page_size}
+
+    def create(self, data: Dict[str, Any]):
+        if self._dept_repo.get_by_code(data.get("code", "")):
+            raise ConflictException(detail="Department code already exists")
+        return self._dept_repo.create(data)
+
+    def update(self, id: int, data: Dict[str, Any]):
+        update_data = {k: v for k, v in data.items() if v is not None}
+        result = self._dept_repo.update(id, update_data)
+        if not result:
+            raise NotFoundException("Department", id)
+        return result
+
+    def delete(self, id: int) -> bool:
+        return self._dept_repo.soft_delete(id)
 
 
 # ══════════════════════════════════════════════════════════════

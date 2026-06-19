@@ -1,25 +1,25 @@
-"""Course Schemas"""
+"""
+Course Schemas
+==============
+"""
+
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 
 
 class CourseCreate(BaseModel):
-    name: str = Field(..., max_length=200)
-    code: str = Field(..., max_length=20)
+    name: str = Field(..., min_length=2, max_length=200)
+    code: str = Field(..., min_length=2, max_length=50)
     description: Optional[str] = None
-    semester: Optional[int] = None
-    teacher_id: Optional[int] = None
-    department_id: int
+    duration_years: Optional[str] = None
 
 
 class CourseUpdate(BaseModel):
     name: Optional[str] = None
     code: Optional[str] = None
     description: Optional[str] = None
-    semester: Optional[int] = None
-    teacher_id: Optional[int] = None
-    department_id: Optional[int] = None
+    duration_years: Optional[str] = None
 
 
 class CourseResponse(BaseModel):
@@ -27,9 +27,8 @@ class CourseResponse(BaseModel):
     name: str
     code: str
     description: Optional[str] = None
-    semester: Optional[int] = None
-    teacher_id: Optional[int] = None
-    department_id: int
-    department_name: Optional[str] = None
+    duration_years: Optional[str] = None
+    department_count: int = 0
     created_at: Optional[datetime] = None
+
     model_config = {"from_attributes": True}

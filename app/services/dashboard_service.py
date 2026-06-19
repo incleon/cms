@@ -18,7 +18,6 @@ from sqlalchemy import func
 from app.models.student import Student
 from app.models.teacher import Teacher
 from app.models.department import Department
-from app.models.course import Course
 from app.models.subject import Subject, SubjectTeacher
 from app.models.fee import Fee
 from app.models.library import LibraryBook, BookIssue
@@ -67,7 +66,7 @@ class AdminDashboard(BaseDashboard):
         total_students = self._db.query(Student).filter(Student.is_deleted == False).count()
         total_teachers = self._db.query(Teacher).filter(Teacher.is_deleted == False).count()
         total_departments = self._db.query(Department).filter(Department.is_deleted == False).count()
-        total_courses = self._db.query(Course).filter(Course.is_deleted == False).count()
+        total_subjects = self._db.query(Subject).filter(Subject.is_deleted == False).count()
         total_users = self._db.query(User).filter(User.is_deleted == False).count()
 
         pending_fees = (
@@ -88,7 +87,7 @@ class AdminDashboard(BaseDashboard):
             "total_students": total_students,
             "total_teachers": total_teachers,
             "total_departments": total_departments,
-            "total_courses": total_courses,
+            "total_subjects": total_subjects,
             "total_users": total_users,
             "pending_fees": float(pending_fees),
             "recent_students": recent_students,
@@ -96,6 +95,7 @@ class AdminDashboard(BaseDashboard):
                 {"label": "Total Students", "value": total_students, "icon": "bi-people", "color": "primary"},
                 {"label": "Total Teachers", "value": total_teachers, "icon": "bi-person-badge", "color": "success"},
                 {"label": "Departments", "value": total_departments, "icon": "bi-building", "color": "info"},
+                {"label": "Total Subjects", "value": total_subjects, "icon": "bi-book", "color": "info"},
                 {"label": "Total Users", "value": total_users, "icon": "bi-person-gear", "color": "dark"},
                 {"label": "Pending Fees", "value": f"₹{pending_fees:,.0f}", "icon": "bi-cash-stack", "color": "warning"},
             ],
@@ -112,16 +112,24 @@ class TeacherDashboard(BaseDashboard):
 
         assigned_subjects = 0
         subjects = []
+        
         if teacher:
-            subject_assignments = (
-                self._db.query(SubjectTeacher)
-                .filter(SubjectTeacher.teacher_id == teacher.id)
+            # Get subjects directly assigned to this teacher via teacher_id
+            assigned_subject_records = (
+                self._db.query(Subject)
+                .filter(Subject.teacher_id == teacher.id, Subject.is_deleted == False)
                 .all()
             )
-            assigned_subjects = len(subject_assignments)
-            for sa in subject_assignments:
-                if sa.subject:
-                    subjects.append({"id": sa.subject.id, "name": sa.subject.name, "code": sa.subject.code})
+            assigned_subjects = len(assigned_subject_records)
+            
+            for subject in assigned_subject_records:
+                subjects.append({
+                    "id": subject.id,
+                    "name": subject.name,
+                    "code": subject.code,
+                    "semester": subject.semester,
+                    "department_name": subject.department.name if subject.department else "N/A",
+                })
 
         return {
             "assigned_subjects": assigned_subjects,

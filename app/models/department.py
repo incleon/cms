@@ -25,7 +25,7 @@ class Department(BaseModel):
     Relationships:
     - ONE-TO-MANY: Department → Students
     - ONE-TO-MANY: Department → Teachers
-    - ONE-TO-MANY: Department → Courses
+    - ONE-TO-MANY: Department → Subjects
     - MANY-TO-ONE: Department → HOD (a teacher who heads the dept)
     """
 
@@ -34,6 +34,14 @@ class Department(BaseModel):
     name = Column(String(200), unique=True, nullable=False, index=True)
     code = Column(String(20), unique=True, nullable=False, index=True)
     description = Column(Text, nullable=True)
+    
+    # Foreign key to Course
+    course_id = Column(
+        Integer,
+        ForeignKey("courses.id", ondelete="CASCADE"),
+        nullable=False,
+        doc="Course ID (e.g., B.TECH, MBA, B.PHARMA)",
+    )
 
     # HOD is a teacher — MANY-TO-ONE (nullable: dept may not have HOD assigned)
     hod_id = Column(
@@ -44,6 +52,13 @@ class Department(BaseModel):
     )
 
     # ── RELATIONSHIPS ────────────────────────────────────────
+    # MANY-TO-ONE: Department belongs to a Course
+    course = relationship(
+        "Course",
+        back_populates="departments",
+        lazy="joined",
+    )
+
     # ONE-TO-MANY: Department has many students (AGGREGATION)
     students = relationship(
         "Student",
@@ -59,9 +74,9 @@ class Department(BaseModel):
         lazy="dynamic",
     )
 
-    # ONE-TO-MANY: Department offers many courses
-    courses = relationship(
-        "Course",
+    # ONE-TO-MANY: Department offers many subjects
+    subjects = relationship(
+        "Subject",
         back_populates="department",
         lazy="dynamic",
     )

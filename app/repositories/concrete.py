@@ -13,10 +13,10 @@ from sqlalchemy import func
 
 from app.repositories.base import BaseRepository
 from app.models.user import User, Role, Permission, UserRole, RolePermission
+from app.models.course import Course
 from app.models.student import Student
 from app.models.teacher import Teacher
 from app.models.department import Department
-from app.models.course import Course
 from app.models.subject import Subject, SubjectTeacher
 from app.models.attendance import Attendance
 from app.models.marks import Marks
@@ -207,6 +207,22 @@ class TeacherRepository(BaseRepository[Teacher]):
 
 
 # ══════════════════════════════════════════════════════════════
+# COURSE REPOSITORY
+# ══════════════════════════════════════════════════════════════
+
+class CourseRepository(BaseRepository[Course]):
+    def __init__(self, db: Session):
+        super().__init__(Course, db)
+
+    def get_by_code(self, code: str) -> Optional[Course]:
+        return (
+            self._db.query(Course)
+            .filter(Course.code == code, Course.is_deleted == False)
+            .first()
+        )
+
+
+# ══════════════════════════════════════════════════════════════
 # DEPARTMENT REPOSITORY
 # ══════════════════════════════════════════════════════════════
 
@@ -223,30 +239,6 @@ class DepartmentRepository(BaseRepository[Department]):
 
 
 # ══════════════════════════════════════════════════════════════
-# COURSE REPOSITORY
-# ══════════════════════════════════════════════════════════════
-
-class CourseRepository(BaseRepository[Course]):
-    def __init__(self, db: Session):
-        super().__init__(Course, db)
-
-    def get_by_code(self, code: str) -> Optional[Course]:
-        return (
-            self._db.query(Course)
-            .options(joinedload(Course.department))
-            .filter(Course.code == code, Course.is_deleted == False)
-            .first()
-        )
-
-    def get_by_department(self, department_id: int) -> List[Course]:
-        return (
-            self._db.query(Course)
-            .filter(Course.department_id == department_id, Course.is_deleted == False)
-            .all()
-        )
-
-
-# ══════════════════════════════════════════════════════════════
 # SUBJECT REPOSITORY
 # ══════════════════════════════════════════════════════════════
 
@@ -257,15 +249,16 @@ class SubjectRepository(BaseRepository[Subject]):
     def get_by_code(self, code: str) -> Optional[Subject]:
         return (
             self._db.query(Subject)
-            .options(joinedload(Subject.course))
+            .options(joinedload(Subject.department), joinedload(Subject.teacher))
             .filter(Subject.code == code, Subject.is_deleted == False)
             .first()
         )
 
-    def get_by_course(self, course_id: int) -> List[Subject]:
+    def get_by_department(self, department_id: int) -> List[Subject]:
         return (
             self._db.query(Subject)
-            .filter(Subject.course_id == course_id, Subject.is_deleted == False)
+            .options(joinedload(Subject.department), joinedload(Subject.teacher))
+            .filter(Subject.department_id == department_id, Subject.is_deleted == False)
             .all()
         )
 
@@ -278,8 +271,8 @@ class SubjectRepository(BaseRepository[Subject]):
     def get_teacher_subjects(self, teacher_id: int) -> List[Subject]:
         return (
             self._db.query(Subject)
-            .join(SubjectTeacher)
-            .filter(SubjectTeacher.teacher_id == teacher_id, Subject.is_deleted == False)
+            .options(joinedload(Subject.department), joinedload(Subject.teacher))
+            .filter(Subject.teacher_id == teacher_id, Subject.is_deleted == False)
             .all()
         )
 
